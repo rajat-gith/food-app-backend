@@ -1,5 +1,6 @@
 const express = require("express");
 const recipeController = require("../controllers/receipeController");
+const authMiddleware = require("../middlewares/authMiddleware");
 const multer = require("multer");
 const path = require("path");
 const router = express.Router();
@@ -17,6 +18,14 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.post("/", upload.array("images", 5), recipeController.createReceipe);
+router.post(
+  "/add",
+  upload.array("images", 5),
+  authMiddleware,
+  recipeController.createReceipe
+);
+
+router.get("/", recipeController.getReceipes);
+router.get("/:id", recipeController.getRecipeById);
 
 module.exports = router;

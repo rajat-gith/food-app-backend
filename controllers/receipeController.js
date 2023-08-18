@@ -19,6 +19,40 @@ async function createReceipe(req, res) {
   }
 }
 
+async function getReceipes(req, res) {
+  try {
+    const { name, ingredients } = req.query;
+    const query = {};
+
+    if (name) {
+      query.name = { $regex: name, $options: "i" };
+    }
+    if (ingredients) {
+      query.ingredients = { $in: ingredients.split(",") };
+    }
+    const receipe = await Recipe.find(query);
+    res.json({ status: "ok", receipe: receipe });
+  } catch (error) {
+    res.json({ status: "error", error: "Failed to fetch receipes" });
+  }
+}
+
+async function getRecipeById(req, res) {
+  const recipeId = req.params.id;
+  console.log(recipeId);
+  try {
+    const recipe = await Recipe.findById(recipeId);
+    if (!recipe) {
+      return res.json({ status: "error", error: "Recipe not found" });
+    }
+    res.json({ status: "ok", recipe: recipe });
+  } catch (error) {
+    res.json({ status: "error", error: "Failed to fetch recipe" });
+  }
+}
+
 module.exports = {
   createReceipe,
+  getReceipes,
+  getRecipeById,
 };

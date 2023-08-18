@@ -28,7 +28,7 @@ mongoose
 
 app.use(bodyParser.json());
 app.use("/api", authRoutes);
-app.use("/api/recipes", recipeRoutes);
+app.use("/api/receipes", recipeRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const PORT = process.env.PORT || 3000;

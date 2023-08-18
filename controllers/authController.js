@@ -36,7 +36,10 @@ async function login(req, res) {
         name: user.name,
         email: user.email,
       },
-      "secret123"
+      "secret123",
+      {
+        expiresIn: "1d",
+      }
     );
     return res.json({ status: "ok", user: token });
   } else {
