@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
+const UserModel = require("../models/userModel"); // Make sure the path is correct
 
-const recipeSchema = new mongoose.Schema({
+const RecipeSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -21,8 +22,12 @@ const recipeSchema = new mongoose.Schema({
     type: [String],
     default: [],
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "UserData", // Reference the UserData model
+    required: true,
+  },
 });
 
-const Recipe = mongoose.model("Recipe", recipeSchema);
-
-module.exports = Recipe;
+const RecipeModel = mongoose.model("Recipe", RecipeSchema);
+module.exports = RecipeModel;

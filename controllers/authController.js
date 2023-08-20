@@ -17,33 +17,44 @@ async function register(req, res) {
 }
 
 async function login(req, res) {
-  const user = await User.findOne({
-    email: req.body.email,
-  });
+  const { email, password } = req.body;
 
-  if (!user) {
-    return res.json({ status: "error", error: "Invalid Login" });
-  }
+  try {
+    const user = await User.findOne({ email });
 
-  const isPasswordValid = await bcrypt.compare(
-    req.body.password,
-    user.password
-  );
+    if (!user) {
+      return res.json({ status: "error", error: "Invalid Login" });
+    }
 
-  if (isPasswordValid) {
-    const token = jwt.sign(
-      {
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (isPasswordValid) {
+      const tokenPayload = {
+        id: user._id,
         name: user.name,
         email: user.email,
-      },
-      "secret123",
-      {
+      };
+
+      const token = jwt.sign(tokenPayload, process.env.SECRET_KEY, {
         expiresIn: "1d",
-      }
-    );
-    return res.json({ status: "ok", user: token });
-  } else {
-    return res.json({ status: "error", user: false });
+      });
+
+      return res.json({
+        status: "ok",
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          recipes: user.recipes,
+          token: token,
+        },
+      });
+    } else {
+      return res.json({ status: "error", error: "Invalid Login" });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.json({ status: "error", error: "An error occurred" });
   }
 }
 

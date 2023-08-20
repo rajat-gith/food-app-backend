@@ -24,7 +24,7 @@ router.post(
   authMiddleware,
   recipeController.createReceipe
 );
-
+router.get("/user/:userId/recipes", recipeController.getUserReceipes);
 router.get("/", recipeController.getReceipes);
 router.get("/:id", recipeController.getRecipeById);
 

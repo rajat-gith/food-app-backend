@@ -1,20 +1,24 @@
 const Recipe = require("../models/receipeModel");
+const User = require("../models/userModel");
 
 async function createReceipe(req, res) {
   try {
+    console.log("req.body=>", req.body);
     const { name, description, ingredients, steps } = req.body;
     const images = req.files.map((file) => file.filename);
-
-    const newReceipe = await Recipe.create({
+    const userId = req.user.id;
+    const newRecipe = await Recipe.create({
       name,
       description,
       ingredients,
       steps,
       images,
+      user: userId,
     });
-
-    res.status(201).json(newReceipe);
+    await User.findByIdAndUpdate(userId, { $push: { recipes: newRecipe._id } });
+    res.status(201).json({ status: "ok", receipe: newRecipe });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Failed to create recipe" });
   }
 }
@@ -51,8 +55,19 @@ async function getRecipeById(req, res) {
   }
 }
 
+async function getUserReceipes(req, res) {
+  try {
+    const userId = req.params.userId;
+    const userRecipes = await Recipe.find({ user: userId });
+    res.status(200).json(userRecipes);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch user recipes" });
+  }
+}
+
 module.exports = {
   createReceipe,
   getReceipes,
   getRecipeById,
+  getUserReceipes,
 };
