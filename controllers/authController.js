@@ -10,7 +10,9 @@ async function register(req, res) {
       email: req.body.email,
       password: newPassword,
     });
-    res.json({ status: "ok" });
+    res.json({
+      status: "ok",
+    });
   } catch (err) {
     res.json({ status: "error", error: "Duplicate Email" });
   }
