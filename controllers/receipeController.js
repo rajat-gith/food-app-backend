@@ -33,8 +33,10 @@ async function getReceipes(req, res) {
       query.name = { $regex: name, $options: "i" };
     }
     if (ingredients) {
-      query.ingredients = { $in: ingredients.split(",") };
+      query.ingredients = { $regex: ingredients, $options: "i" };
     }
+
+    console.log(query);
     const receipe = await Recipe.find(query);
     res.json({ status: "ok", receipe: receipe });
   } catch (error) {
