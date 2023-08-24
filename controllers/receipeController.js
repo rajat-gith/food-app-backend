@@ -1,3 +1,4 @@
+const RecipeModel = require("../models/receipeModel");
 const Recipe = require("../models/receipeModel");
 const User = require("../models/userModel");
 
@@ -65,9 +66,31 @@ async function getUserReceipes(req, res) {
   }
 }
 
+async function updateRecipe(req, res) {
+  const recipeId = req.params.id;
+  const updateData = req.body;
+  console.log(recipeId, req.body);
+  try {
+    const updateRecipe = await Recipe.findByIdAndUpdate(
+      recipeId,
+      { $set: updateData },
+      { new: true }
+    );
+
+    if (!updateRecipe) {
+      return res.status(404).json({ message: "Recipe not found" });
+    }
+    return res.status(200).json(updateRecipe);
+  } catch (error) {
+    console.log("Error Updating Recipe:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
 module.exports = {
   createReceipe,
   getReceipes,
   getRecipeById,
   getUserReceipes,
+  updateRecipe,
 };

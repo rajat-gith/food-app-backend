@@ -27,5 +27,6 @@ router.post(
 router.get("/user/:userId/recipes", recipeController.getUserReceipes);
 router.get("/", recipeController.getReceipes);
 router.get("/:id", recipeController.getRecipeById);
+router.put("/:id/update", recipeController.updateRecipe);
 
 module.exports = router;
